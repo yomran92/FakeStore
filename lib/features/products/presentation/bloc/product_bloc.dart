@@ -18,14 +18,39 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     GetProductsEvent event,
     Emitter<ProductState> emit,
   ) async {
-    // Handle clear filters
-    if (event.clearFilters && state is GetAllProductLoaded) {
+     if (event.clearFilters && state is GetAllProductLoaded) {
       final currentState = state as GetAllProductLoaded;
       emit(
         currentState.copyWith(
           searchQuery: '',
           selectedCategory: 'All',
           filteredProducts: currentState.getAllProductEntity.productList,
+        ),
+      );
+      return;
+    }
+
+     if (event.searchQuery != null && state is GetAllProductLoaded) {
+      final currentState = state as GetAllProductLoaded;
+      final allProducts = currentState.getAllProductEntity.productList ?? [];
+
+      List<ProductModel> filtered = allProducts;
+
+       if (event.searchQuery!.isNotEmpty) {
+        filtered =
+            filtered
+                .where(
+                  (p) => p.title.toLowerCase().contains(
+                    event.searchQuery!.toLowerCase(),
+                  ),
+                )
+                .toList();
+      }
+
+      emit(
+        currentState.copyWith(
+          searchQuery: event.searchQuery,
+          filteredProducts: filtered,
         ),
       );
       return;

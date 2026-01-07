@@ -14,12 +14,14 @@ class GetAllProductLoaded extends ProductState {
   final GetAllProductEntity getAllProductEntity;
   final bool isLoadingMore;
   final String? selectedCategory;
+  final String  searchQuery;
   final List<ProductModel>? filteredProducts;
 
   const GetAllProductLoaded({
     required this.getAllProductEntity,
     this.isLoadingMore = false,
     this.selectedCategory,
+    this.searchQuery='',
     this.filteredProducts,
   });
 
@@ -27,6 +29,7 @@ class GetAllProductLoaded extends ProductState {
   List<Object> get props => [
     getAllProductEntity,
     isLoadingMore,
+    searchQuery,
     selectedCategory ?? '',
     filteredProducts ?? [],
   ];
@@ -43,6 +46,7 @@ class GetAllProductLoaded extends ProductState {
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       filteredProducts: filteredProducts ?? this.filteredProducts,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
   }
 }

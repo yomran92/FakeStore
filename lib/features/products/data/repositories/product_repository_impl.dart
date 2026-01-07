@@ -6,6 +6,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/feature/domain/entities/error_entity.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_remote_data_source.dart';
+import '../models/params/get_product_by_id.dart';
 
 class ProductRepository extends IProductRepository {
   ProductRemoteDataSource remoteDataSource;
@@ -27,9 +28,9 @@ class ProductRepository extends IProductRepository {
   }
 
   @override
-  Future<Either<ErrorEntity, ProductModel>> getProductDetail(int id) async {
+  Future<Either<ErrorEntity, ProductModel>> getProductDetail(GetProductByIdParams model) async {
     try {
-      final ProductModel remote = await remoteDataSource.getProductDetail(id);
+      final ProductModel remote = await remoteDataSource.getProductDetail(model);
       return Right(remote);
     } on AppException catch (e) {
       return Left(ErrorEntity.fromException(e));

@@ -5,11 +5,11 @@ import 'package:fakestore/features/products/data/models/params/get_all_product.d
 import 'package:fakestore/features/products/data/models/response/get_all_product_model.dart';
 
 import '../../../../core/error/exceptions.dart';
-import '../../../../core/feature/data/data_sources/remote_data_source.dart';
+import '../models/params/get_product_by_id.dart';
 
-abstract class IProductRemoteDataSource extends RemoteDataSource {
+abstract class IProductRemoteDataSource  {
   Future<GetAllProductModel> getAllProducts(GetAllProductParams model);
-  Future<ProductModel> getProductDetail(int id);
+  Future<ProductModel> getProductDetail(GetProductByIdParams model);
 }
 
 class ProductRemoteDataSource extends IProductRemoteDataSource {
@@ -19,18 +19,9 @@ class ProductRemoteDataSource extends IProductRemoteDataSource {
   @override
   Future<GetAllProductModel> getAllProducts(GetAllProductParams params) async {
     try {
-      // Build the endpoint based on category
-      String endpoint = 'https://fakestoreapi.com/products';
-      final category = params.body?.category;
-
-      if (category != null &&
-          category.isNotEmpty &&
-          category.toLowerCase() != 'all') {
-        endpoint = 'https://fakestoreapi.com/products/category/$category';
-      }
 
       final response = await client.get(
-        endpoint,
+        params.url,
         queryParameters: params.urlParams,
       );
 
@@ -48,10 +39,10 @@ class ProductRemoteDataSource extends IProductRemoteDataSource {
   }
 
   @override
-  Future<ProductModel> getProductDetail(int id) async {
+  Future<ProductModel> getProductDetail(GetProductByIdParams model) async {
     try {
       final response = await client.get(
-        'https://fakestoreapi.com/products/$id',
+       model.url,
       );
 
       if (response.statusCode == 200) {

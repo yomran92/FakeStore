@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import '../../../../core/error/exceptions.dart';
-import '../../../../core/feature/data/data_sources/remote_data_source.dart';
 import '../models/params/get_all_category.dart';
 import '../models/response/get_all_category_model.dart';
 
-abstract class ICategoryRemoteDataSource extends RemoteDataSource {
+abstract class ICategoryRemoteDataSource  {
    Future<GetAllCategoryModel> getAllCategorys(GetAllCategoryParams model);
 
 }
@@ -22,7 +21,7 @@ class CategoryRemoteDataSource extends ICategoryRemoteDataSource {
 
     try {
       final response = await client.get(
-        'https://fakestoreapi.com/products/categories',
+        params.url,
       );
 
          return

@@ -8,17 +8,13 @@ class GetAllCategoryParams extends ParamsModel<GetAllCategoryParamsBody> {
 
 
   @override
-  String get url => '/Category=s';
+  String get url => '${AppConfigurations.BaseUrl}products/categories';
 
   @override
   Map<String, dynamic> get urlParams {
     final Map<String, dynamic> res = {};
 
-    res.addAll({
-       'PageNumber': body!.pageNumber,
-       'limit': body!.limit,
 
-     });
 
 
     return res;
@@ -32,46 +28,31 @@ class GetAllCategoryParams extends ParamsModel<GetAllCategoryParamsBody> {
 }
 
 class GetAllCategoryParamsBody extends BaseBodyModel {
-   late int? pageNumber;
-  late int? limit;
-
-  late String? industryId;
-  late List<String>? filterIDs;
-  late int sortBy;
 
 
 
-  late bool? withCompanyName;
+
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> res = {};
-    res.addAll({
-      // integer
-      'PageNumber': pageNumber,
-       // integer
-
-    });
 
     return res;
   }
 
   factory GetAllCategoryParamsBody.fromJson(Map<String, dynamic> json) =>
       GetAllCategoryParamsBody(
-        pageNumber: json['pageNumber'] as int,
-        limit: json['limit'] as int,
+
 
       );
 
-  GetAllCategoryParamsBody({
-    required this.pageNumber,
-    required this.limit,
+  GetAllCategoryParamsBody(
 
-  });
+
+  );
   @override
   List<Object?> get props => [
-     pageNumber,
-    limit,
+
 
   ];
 

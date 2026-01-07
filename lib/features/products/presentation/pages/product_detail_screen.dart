@@ -3,6 +3,8 @@ import 'package:fakestore/features/cart/data/models/response/cart_item_model.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/configurations/app_string.dart';
+import '../../data/models/params/get_product_by_id.dart';
 import '../bloc/product_bloc.dart';
 import '../bloc/bloc_detail/product_detail_bloc.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -21,14 +23,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   void initState() {
     super.initState();
     context.read<ProductDetailBloc>().add(
-      GetProductDetailEvent(widget.productId),
-    );
+      GetProductDetailEvent(
+
+          GetProductByIdParams(body: GetProductByIdParamsBody(id: widget.productId),
+          )));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Product Details')),
+      appBar: AppBar(title: const Text(AppStrings.productDetails)),
       body: BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
           if (state is ProductDetailLoading) {
@@ -88,7 +92,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          'Description',
+                          AppStrings.description  ,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -127,13 +131,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${product.title} added to cart')),
+                    SnackBar(content: Text('${product.title} ${AppStrings.addedToCart}' )),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 16.h),
                 ),
-                child: const Text('Add to Cart'),
+                child: const Text(AppStrings.addToCart ),
               ),
             );
           }

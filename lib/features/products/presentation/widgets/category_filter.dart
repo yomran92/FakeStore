@@ -1,11 +1,11 @@
+import 'package:fakestore/core/configurations/app_configuration.dart';
 import 'package:fakestore/features/category/data/models/params/get_all_category.dart';
 import 'package:fakestore/features/products/data/models/params/get_all_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/widget/app_error_widget.dart';
-import '../../../../injection_container.dart';
-import '../../../category/data/models/response/get_all_category_model.dart';
+ import '../../../category/data/models/response/get_all_category_model.dart';
 import '../../../category/presentation/bloc/category_bloc.dart';
 import '../../../products/presentation/bloc/product_bloc.dart';
 
@@ -18,7 +18,7 @@ class CategoryFilter extends StatelessWidget {
       context.read<CategoryBloc>().add(
         GetCategoryEvent(
           getCategoryParams: GetAllCategoryParams(
-            body: GetAllCategoryParamsBody(pageNumber: 1, limit: 10),
+            body: GetAllCategoryParamsBody(),
           ),
         ),
       );
@@ -47,7 +47,7 @@ class CategoryFilter extends StatelessWidget {
                 context.read<CategoryBloc>().add(
                   GetCategoryEvent(
                     getCategoryParams: GetAllCategoryParams(
-                      body: GetAllCategoryParamsBody(pageNumber: 1, limit: 10),
+                      body: GetAllCategoryParamsBody( ),
                     ),
                   ),
                 );
@@ -89,19 +89,16 @@ class CategoryFilter extends StatelessWidget {
                     selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        // Update CategoryBloc selection state
-                        context.read<CategoryBloc>().add(
+                         context.read<CategoryBloc>().add(
                           SelectCategoryEvent(selectedCategory: category.title),
                         );
 
-                        // Also update ProductBloc to fetch filtered products
-                        context.read<ProductBloc>().add(
+                         context.read<ProductBloc>().add(
                           GetProductsEvent(
                             category: category.title,
                             getProductsParams: GetAllProductParams(
                               body: GetAllProductParamsBody(
-                                pageNumber: 1,
-                                limit: 10,
+                                 limit: AppConfigurations.PageSize,
                                 category:
                                     category.title == 'All'
                                         ? null

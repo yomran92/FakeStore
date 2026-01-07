@@ -5,10 +5,10 @@ abstract class ProductDetailEvent extends Equatable {
 }
 
 class GetProductDetailEvent extends ProductDetailEvent {
-  final int productId;
+  final GetProductByIdParams params;
 
-  const GetProductDetailEvent(this.productId);
+  const GetProductDetailEvent(this.params);
 
   @override
-  List<Object?> get props => [productId];
+  List<Object?> get props => [params];
 }

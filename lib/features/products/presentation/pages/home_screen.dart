@@ -2,8 +2,10 @@ import 'package:fakestore/features/products/data/models/params/get_all_product.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/configurations/app_configuration.dart';
+import '../../../../core/configurations/app_string.dart';
 import '../../../../core/widget/app_error_widget.dart';
-import '../../../../injection_container.dart';
+import 'package:badges/badges.dart' as badges;
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/pages/cart_screen.dart';
 import '../bloc/product_bloc.dart';
@@ -19,48 +21,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final RefreshController _refreshController = RefreshController(
-    initialRefresh: false,
+  final RefreshController _refreshController = RefreshController(  initialRefresh: false,
   );
-  int _currentLimit = 10;
+  final TextEditingController _searchController = TextEditingController();
+
+  int _currentLimit = 4;
 
   @override
   void initState() {
     super.initState();
     _fetchProducts(isRefresh: true);
-    // _scrollController.addListener(_onScroll);
-  }
+   }
 
   @override
   void dispose() {
     _refreshController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
   void _fetchProducts({bool isRefresh = false, bool isLoadMore = false}) {
     if (isRefresh) {
-      _currentLimit = 10;
+      _currentLimit = AppConfigurations.PageSize;
     } else if (isLoadMore) {
-      _currentLimit += 10;
+      _currentLimit += AppConfigurations.PageSize;
     }
 
-    // Get current category from ProductBloc state
-    String? currentCategory;
+     String? currentCategory;
     final productState = context.read<ProductBloc>().state;
     if (productState is GetAllProductLoaded) {
       currentCategory = productState.selectedCategory;
     }
-
-    // FakeStore max is 20, so cap it if needed, but for infinite scroll simulation we just increase
-    // If limit > 20, API returns 20 items. logic still holds.
 
     context.read<ProductBloc>().add(
       GetProductsEvent(
         category: currentCategory,
         getProductsParams: GetAllProductParams(
           body: GetAllProductParamsBody(
-            pageNumber: 1,
-            limit: _currentLimit,
+             limit: _currentLimit,
             category:
                 currentCategory == 'All' || currentCategory == null
                     ? null
@@ -85,47 +83,40 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FakeStore'),
+        title:   Text(AppStrings.appName),
         actions: [
+
           BlocBuilder<CartBloc, CartState>(
             builder: (context, state) {
               int count = 0;
               if (state is CartLoaded) {
                 count = state.items.length;
               }
-              return Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.shopping_cart),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const CartScreen()),
-                      );
-                    },
-                  ),
-                  if (count > 0)
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '$count',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+              return
+
+
+                badges.Badge(
+                    position: badges.BadgePosition.topEnd(top: 0, end: 3),
+                    badgeAnimation: badges.BadgeAnimation.slide(
+
                     ),
-                ],
-              );
+                    showBadge: count>0,
+                    badgeStyle: badges.BadgeStyle(
+                     ),
+                    badgeContent: Text(
+                      count.toString(),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.shopping_cart),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
+                        );
+                      },
+                    ),);
+
             },
           ),
         ],
@@ -149,6 +140,46 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         child: Column(
           children: [
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search products...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+                ),
+                onChanged: (value) {
+                  String? currentCategory;
+                  final state = context.read<ProductBloc>().state;
+                  if (state is GetAllProductLoaded) {
+                    currentCategory = state.selectedCategory;
+                  }
+                  context.read<ProductBloc>().add(
+                      GetProductsEvent(
+                        category: currentCategory,
+                        searchQuery: value,
+                        getProductsParams: GetAllProductParams(
+                          body: GetAllProductParamsBody(
+                            limit: _currentLimit,
+                            category:
+                            currentCategory == null || currentCategory == 'All'
+                                ? null
+                                : currentCategory,
+                          ),
+                        ),
+                        isRefresh: false,
+                        isLoadMore: false,
+                      )
+                  );
+
+                },
+              ),
+            ),
+
             const CategoryFilter(),
             Expanded(
               child: BlocBuilder<ProductBloc, ProductState>(
@@ -159,23 +190,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     return SmartRefresher(
                       controller: _refreshController,
                       enablePullDown: true,
-                      enablePullUp: true,
+                      enablePullUp: (state.getAllProductEntity.productList?.length??0)
+                          <AppConfigurations.ListLimit,
                       header: const WaterDropHeader(),
                       footer: CustomFooter(
                         builder: (context, mode) {
                           Widget body;
                           if (mode == LoadStatus.idle) {
-                            body = const Text("pull up load");
+                            body = const Text(AppStrings.pullUpLoad);
                           } else if (mode == LoadStatus.loading) {
                             body = const Center(
                               child: CircularProgressIndicator(),
                             );
                           } else if (mode == LoadStatus.failed) {
-                            body = const Text("Load Failed!Click retry!");
+                            body = const Text(AppStrings.loadFailedClickRetry  );
                           } else if (mode == LoadStatus.canLoading) {
-                            body = const Text("release to load more");
+                            body = const Text(AppStrings.releaseToLoadMore );
                           } else {
-                            body = const Text("No more Data");
+                            body = const Text(AppStrings.noMoreData  );
                           }
                           return SizedBox(
                             height: 55.0.h,
@@ -238,3 +270,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+
+

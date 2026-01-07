@@ -1,3 +1,4 @@
+import 'package:fakestore/core/configurations/app_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -35,7 +36,7 @@ class AppErrorWidget extends StatelessWidget {
         SizedBox(height: isHorizontal ? 0 : 16.h, width: isHorizontal ? 16.w : 0),
         ElevatedButton(
           onPressed: onRetry,
-          child: const Text('Retry'),
+          child: const Text(AppStrings.retry),
         ),
       ],
     ];

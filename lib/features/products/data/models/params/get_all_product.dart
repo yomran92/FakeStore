@@ -6,7 +6,20 @@ class GetAllProductParams extends ParamsModel<GetAllProductParamsBody> {
   Map<String, String> get additionalHeaders => {};
 
   @override
-  String get url => '/products';
+  String get url  {
+    String urlTmp=AppConfigurations.BaseUrl;
+    urlTmp=urlTmp+'products';
+    if(body!.category!=null){
+      urlTmp=urlTmp+'';
+    }
+    if (body!.category  != null &&
+        body!.category!.isNotEmpty &&
+        body!.category!.toLowerCase() != 'all') {
+      urlTmp = '${urlTmp}/category/${body!.category}';
+    }
+    return urlTmp;
+
+  }
 
   @override
   Map<String, dynamic> get urlParams {
@@ -15,8 +28,6 @@ class GetAllProductParams extends ParamsModel<GetAllProductParamsBody> {
     if (body?.limit != null) {
       res['limit'] = body!.limit;
     }
-    // FakeStore API doesn't use PageNumber for offset-based pagination in the way we usually do,
-    // but we'll include it if needed for local logic, though API only respects 'limit' and 'sort'.
 
     return res;
   }
@@ -28,18 +39,15 @@ class GetAllProductParams extends ParamsModel<GetAllProductParamsBody> {
 }
 
 class GetAllProductParamsBody extends BaseBodyModel {
-  late int? pageNumber;
-  late int? limit;
+   late int? limit;
   late String? category;
 
-  late bool? withCompanyName;
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> res = {};
     if (limit != null) res['limit'] = limit;
     if (category != null) res['category'] = category;
-    if (pageNumber != null) res['pageNumber'] = pageNumber;
     return res;
   }
 
@@ -49,7 +57,7 @@ class GetAllProductParamsBody extends BaseBodyModel {
         category: json['category'] as String?,
       );
 
-  GetAllProductParamsBody({this.pageNumber, this.limit, this.category});
+  GetAllProductParamsBody({  this.limit, this.category});
 
-  List<Object?> get props => [pageNumber, limit, category];
+  List<Object?> get props => [   limit, category];
 }
