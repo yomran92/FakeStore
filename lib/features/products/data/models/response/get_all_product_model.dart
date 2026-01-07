@@ -1,4 +1,4 @@
-import '../../../../../core/feature/data/models/responses/response_model.dart';
+ import '../../../../../core/feature/data/models/responses/response_model.dart';
 import '../../../domain/entities/product.dart';
  class GetAllProductModel extends ResponseModel {
   int? pageIndex;
@@ -59,33 +59,34 @@ import '../../../domain/entities/product.dart';
     productList: listMessageContent ?? [],
   );
 }
-class ProductModel extends Product {
+
+class ProductModel {
+  final int id;
+  final String title;
+  final double price;
+  final String description;
+  final String category;
+  final String image;
+  final RatingModel rating;
+
   const ProductModel({
-    required int id,
-    required String title,
-    required double price,
-    required String description,
-    required String category,
-    required String image,
-    required RatingModel rating,
-  }) : super(
-          id: id,
-          title: title,
-          price: price,
-          description: description,
-          category: category,
-          image: image,
-          rating: rating,
-        );
+    required this.id,
+    required this.title,
+    required this.price,
+    required this.description,
+    required this.category,
+    required this.image,
+    required this.rating,
+  });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'],
-      title: json['title'],
+      id: json['id'] as int,
+      title: json['title'] as String,
       price: (json['price'] as num).toDouble(),
-      description: json['description'],
-      category: json['category'],
-      image: json['image'],
+      description: json['description'] as String,
+      category: json['category'] as String,
+      image: json['image'] as String,
       rating: RatingModel.fromJson(json['rating']),
     );
   }
@@ -98,21 +99,24 @@ class ProductModel extends Product {
       'description': description,
       'category': category,
       'image': image,
-      'rating': (rating as RatingModel).toJson(),
+      'rating': rating.toJson(),
     };
   }
 }
 
-class RatingModel extends Rating {
+class RatingModel {
+  final double rate;
+  final int count;
+
   const RatingModel({
-    required double rate,
-    required int count,
-  }) : super(rate: rate, count: count);
+    required this.rate,
+    required this.count,
+  });
 
   factory RatingModel.fromJson(Map<String, dynamic> json) {
     return RatingModel(
       rate: (json['rate'] as num).toDouble(),
-      count: json['count'],
+      count: json['count'] as int,
     );
   }
 

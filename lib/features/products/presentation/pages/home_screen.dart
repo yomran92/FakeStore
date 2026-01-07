@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../injection_container.dart';
 import '../bloc/product_bloc.dart';
+import '../widgets/category_filter.dart';
 import '../widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          // const CategoryFilter(),
+          const CategoryFilter(),
           Expanded(
 
             child:
