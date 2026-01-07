@@ -1,31 +1,31 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fakestore/features/products/data/repositories/product_repository_impl.dart';
 import '../../../../injection_container.dart';
-import '../../data/models/params/get_all_product.dart';
-import '../../domain/entities/product.dart';
  import '../../../../core/error/failures.dart';
-import '../../domain/usecases/get_all_products_use_case.dart';
-part 'product_event.dart';
-part 'product_state.dart';
-class ProductBloc extends Bloc<ProductEvent, ProductState> {
-  ProductBloc() : super(ProductInitial()) {
+import '../../data/models/params/get_all_category.dart';
+import '../../data/repositories/category_repository_impl.dart';
+ import '../../domain/entities/category.dart';
+import '../../domain/usecases/get_all_categorys_use_case.dart';
+part 'category_event.dart';
+part 'category_state.dart';
+class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
+  CategoryBloc() : super(CategoryInitial()) {
 
 
-    on<GetProductsEvent>(_onGetProducts);
+    on<GetCategoryEvent>(_onGetCategory);
     // on<SearchProductsEvent>(_onSearchProducts);
     // on<FilterProductsByCategoryEvent>(_onFilterProductsByCategory);
     // on<ClearProductFilterEvent>(_onClearFilter);
   }
 
-  Future<void> _onGetProducts(GetProductsEvent event, Emitter<ProductState> emit) async {
-    emit(ProductLoading());
-  final res = await GetAllProductUseCase(sl<ProductRepository>())
-        .call(event.getProductsParams!);
+  Future<void> _onGetCategory(GetCategoryEvent event, Emitter<CategoryState> emit) async {
+    emit(CategoryLoading());
+  final res = await GetAllCategorysUseCase(sl<CategoryRepository>())
+        .call(event.getCategoryParams!);
     res.fold(
-      (failure) => emit(ProductError(failure.details??'')),
-      (products) {
-         emit(GetAllProductLoaded(getAllProductEntity:  products));
+      (failure) => emit(CategoryError(failure!.details??'')),
+      (categorys) {
+         emit(GetAllCategoryLoaded(getAllCategoryEntity:  categorys));
       },
     );
   }
