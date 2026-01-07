@@ -53,7 +53,7 @@ import '../models/response/get_cart_items_model.dart';
     try {
       final GetCartItemsModel remote = await localDataSource.getCart();
       return Right(remote.toEntity());
-    } on AppException catch (e, st) {
+    } on AppException catch (e) {
 
       return Left(ErrorEntity.fromException(e));
     }

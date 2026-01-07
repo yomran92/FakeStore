@@ -7,16 +7,33 @@ abstract class CategoryState extends Equatable {
 }
 
 class CategoryInitial extends CategoryState {}
-class CategoryLoading extends CategoryState {}
-class GetAllCategoryLoaded extends CategoryState {
-  final GetAllCategoryEntity  getAllCategoryEntity;
 
-  const GetAllCategoryLoaded({    required this.getAllCategoryEntity});
-  
+class CategoryLoading extends CategoryState {}
+
+class GetAllCategoryLoaded extends CategoryState {
+  final GetAllCategoryEntity getAllCategoryEntity;
+  final String selectedCategory;
+
+  const GetAllCategoryLoaded({
+    required this.getAllCategoryEntity,
+    this.selectedCategory = 'All',
+  });
+
+  GetAllCategoryLoaded copyWith({
+    GetAllCategoryEntity? getAllCategoryEntity,
+    String? selectedCategory,
+  }) {
+    return GetAllCategoryLoaded(
+      getAllCategoryEntity: getAllCategoryEntity ?? this.getAllCategoryEntity,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
+    );
+  }
+
   @override
-  List<Object> get props => [getAllCategoryEntity];
+  List<Object> get props => [getAllCategoryEntity, selectedCategory];
 }
- class CategoryError extends CategoryState {
+
+class CategoryError extends CategoryState {
   final String message;
   const CategoryError(this.message);
   @override

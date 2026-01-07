@@ -1,95 +1,125 @@
 import 'package:fakestore/features/category/data/models/params/get_all_category.dart';
+import 'package:fakestore/features/products/data/models/params/get_all_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
- import '../../../../injection_container.dart';
+import '../../../../core/widget/app_error_widget.dart';
+import '../../../../injection_container.dart';
 import '../../../category/data/models/response/get_all_category_model.dart';
 import '../../../category/presentation/bloc/category_bloc.dart';
+import '../../../products/presentation/bloc/product_bloc.dart';
 
 class CategoryFilter extends StatelessWidget {
   const CategoryFilter({super.key});
 
   @override
   Widget build(BuildContext context) {
-if(sl<CategoryBloc>().state is CategoryInitial){
-  sl<CategoryBloc>().add(GetCategoryEvent(getCategoryParams: GetAllCategoryParams(
-    body: GetAllCategoryParamsBody(pageNumber: 1, limit: 10)
-  )));
-}
+    if (context.read<CategoryBloc>().state is CategoryInitial) {
+      context.read<CategoryBloc>().add(
+        GetCategoryEvent(
+          getCategoryParams: GetAllCategoryParams(
+            body: GetAllCategoryParamsBody(pageNumber: 1, limit: 10),
+          ),
+        ),
+      );
+    }
 
-    return
-
-      BlocConsumer<CategoryBloc, CategoryState>(
-          bloc:  sl<CategoryBloc>(),
-          listener: (context, state) {
-            if (state is CategoryLoading) {
-              print('loading');
-            } else if (state is GetAllCategoryLoaded) {
-
-
-            } else if (state is CategoryError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('❌ ${state.message!}'),
-                  duration: const Duration(seconds: 3),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
-          },
-
-       builder: (context, state) {
+    return BlocListener<CategoryBloc, CategoryState>(
+      listener: (context, state) {
         if (state is CategoryLoading) {
-          return SizedBox(
-            height: 50.h,
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        } else if (state is GetAllCategoryLoaded) {
-          return SizedBox(
-            height: 50.h,
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              scrollDirection: Axis.horizontal,
-              itemCount: (state.getAllCategoryEntity.categoryList?.length??0) + 1,
-              separatorBuilder: (_, __) => SizedBox(width: 10.w),
-              itemBuilder: (context, index) {
-                final isAll = index == 0;
-                final CategoryModel category = isAll ? CategoryModel(
-                    id: 0,
-                    title:'All')
-                    :
-                state.getAllCategoryEntity.categoryList![index - 1];
-                final isSelected = isAll
-                    ? state.getAllCategoryEntity.categoryList?.isEmpty
-                    : state.getAllCategoryEntity.categoryList == category;
-
-                return ChoiceChip(
-                  label: Text(category.title.toUpperCase()),
-                  selected: isSelected??false,
-                  onSelected: (selected) {
-                    // if (selected) {
-                    //   context.read<CategoryBloc>().add(
-                    //     SelectCategoryEvent(isAll ? '' : category),
-                    //   );
-                    //   // if (isAll) {
-                    //   //   context.read<ProductBloc>().add(GetProductsEvent());
-                    //   // } else {
-                    //   //   context.read<ProductBloc>().add(
-                    //   //     FilterProductsByCategoryEvent(category),
-                    //   //   );
-                    //   // }
-                    //    // Also plain filters should clear text search or keep it?
-                    //    // Requirements don't specify deep interaction.
-                    //    // Simple: Category filter overrides list.
-                    // }
-                  },
-                );
-              },
+          // Optional: handle global loading indicator if needed
+        } else if (state is CategoryError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('❌ ${state.message}'),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
             ),
           );
         }
-        return const SizedBox.shrink();
       },
+      child: BlocBuilder<CategoryBloc, CategoryState>(
+        builder: (context, categoryState) {
+          if (categoryState is CategoryError) {
+            return AppErrorWidget(isHorizontal: true,
+              message: categoryState.message,
+              onRetry: (){
+                context.read<CategoryBloc>().add(
+                  GetCategoryEvent(
+                    getCategoryParams: GetAllCategoryParams(
+                      body: GetAllCategoryParamsBody(pageNumber: 1, limit: 10),
+                    ),
+                  ),
+                );
+              },
+            ) ;
+          }
+          else
+          if (categoryState is CategoryLoading) {
+            return SizedBox(
+              height: 50.h,
+              child: const Center(child: CircularProgressIndicator()),
+            );
+          } else if (categoryState is GetAllCategoryLoaded) {
+            return SizedBox(
+              height: 50.h,
+              child: ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                scrollDirection: Axis.horizontal,
+                itemCount:
+                    (categoryState.getAllCategoryEntity.categoryList?.length ??
+                        0) +
+                    1,
+                separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                itemBuilder: (context, index) {
+                  final isAll = index == 0;
+                  final CategoryModel category =
+                      isAll
+                          ? CategoryModel(id: 0, title: 'All')
+                          : categoryState
+                              .getAllCategoryEntity
+                              .categoryList![index - 1];
+
+                  final isSelected =
+                      categoryState.selectedCategory == category.title;
+
+                  return ChoiceChip(
+                    selectedColor: Colors.deepPurple,
+                    label: Text(category.title.toUpperCase()),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        // Update CategoryBloc selection state
+                        context.read<CategoryBloc>().add(
+                          SelectCategoryEvent(selectedCategory: category.title),
+                        );
+
+                        // Also update ProductBloc to fetch filtered products
+                        context.read<ProductBloc>().add(
+                          GetProductsEvent(
+                            category: category.title,
+                            getProductsParams: GetAllProductParams(
+                              body: GetAllProductParamsBody(
+                                pageNumber: 1,
+                                limit: 10,
+                                category:
+                                    category.title == 'All'
+                                        ? null
+                                        : category.title,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }

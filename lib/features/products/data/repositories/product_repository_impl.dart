@@ -4,25 +4,35 @@ import 'package:fakestore/features/products/data/models/response/get_all_product
 import 'package:fakestore/features/products/domain/entities/product.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/feature/domain/entities/error_entity.dart';
- import '../../domain/repositories/product_repository.dart';
+import '../../domain/repositories/product_repository.dart';
 import '../datasources/product_remote_data_source.dart';
 
- class ProductRepository extends IProductRepository {
+class ProductRepository extends IProductRepository {
   ProductRemoteDataSource remoteDataSource;
 
   ProductRepository(this.remoteDataSource);
 
-
-
   @override
-  Future<Either<ErrorEntity, GetAllProductEntity>> getAllProducts(GetAllProductParams model) async {
+  Future<Either<ErrorEntity, GetAllProductEntity>> getAllProducts(
+    GetAllProductParams model,
+  ) async {
     try {
-      final GetAllProductModel remote = await remoteDataSource.getAllProducts(model);
+      final GetAllProductModel remote = await remoteDataSource.getAllProducts(
+        model,
+      );
       return Right(remote.toEntity());
-    } on AppException catch (e, st) {
-
+    } on AppException catch (e) {
       return Left(ErrorEntity.fromException(e));
     }
   }
 
+  @override
+  Future<Either<ErrorEntity, ProductModel>> getProductDetail(int id) async {
+    try {
+      final ProductModel remote = await remoteDataSource.getProductDetail(id);
+      return Right(remote);
+    } on AppException catch (e) {
+      return Left(ErrorEntity.fromException(e));
+    }
+  }
 }

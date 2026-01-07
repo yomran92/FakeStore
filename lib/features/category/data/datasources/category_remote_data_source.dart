@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
+import '../../../../core/error/exceptions.dart';
 import '../../../../core/feature/data/data_sources/remote_data_source.dart';
-import '../../../../injection_container.dart';
 import '../models/params/get_all_category.dart';
 import '../models/response/get_all_category_model.dart';
 
@@ -17,20 +19,23 @@ class CategoryRemoteDataSource extends ICategoryRemoteDataSource {
 
   @override
   Future<GetAllCategoryModel> getAllCategorys(GetAllCategoryParams params) async {
-     final response = await client.get(
-      'https://fakestoreapi.com/products/categories',
-     );
 
-    if (response.statusCode == 200) {
-      return
-        GetAllCategoryModel(
-          listMessageContent: (response.data as List)
-              .map((json) => CategoryModel(id: 1,title:json ))
-              .toList()
-        );
+    try {
+      final response = await client.get(
+        'https://fakestoreapi.com/products/categories',
+      );
 
-    } else {
-      throw Exception();
+         return
+          GetAllCategoryModel(
+              listMessageContent: (response.data as List)
+                  .map((json) => CategoryModel(id: 1, title: json))
+                  .toList()
+          );
+
+    }on DioException catch (e) {
+      throw AppException('Failed to fetch products: ${e.message}');
+    } on SocketException {
+      throw AppException('No internet connection');
     }
   }
 

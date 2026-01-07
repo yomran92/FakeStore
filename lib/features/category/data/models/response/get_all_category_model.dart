@@ -15,7 +15,7 @@ import '../../../../../core/feature/data/models/responses/response_model.dart';
               ?.map((e) => CategoryModel.fromJson(e))
               .toList() ??
               [];
-    } catch (e, st) {
+    } catch (e) {
 
       rethrow;
     }

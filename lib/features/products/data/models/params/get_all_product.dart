@@ -1,4 +1,3 @@
-
 import '../../../../../core/configurations/app_configuration.dart';
 import '../../../../../core/feature/data/models/params/params_model.dart';
 
@@ -6,24 +5,21 @@ class GetAllProductParams extends ParamsModel<GetAllProductParamsBody> {
   @override
   Map<String, String> get additionalHeaders => {};
 
-
   @override
-  String get url => '/product=s';
+  String get url => '/products';
 
   @override
   Map<String, dynamic> get urlParams {
     final Map<String, dynamic> res = {};
 
-    res.addAll({
-       'PageNumber': body!.pageNumber,
-       'limit': body!.limit,
-
-     });
-
+    if (body?.limit != null) {
+      res['limit'] = body!.limit;
+    }
+    // FakeStore API doesn't use PageNumber for offset-based pagination in the way we usually do,
+    // but we'll include it if needed for local logic, though API only respects 'limit' and 'sort'.
 
     return res;
   }
-
 
   GetAllProductParams({super.body}) : super(baseUrl: AppConfigurations.BaseUrl);
 
@@ -32,47 +28,28 @@ class GetAllProductParams extends ParamsModel<GetAllProductParamsBody> {
 }
 
 class GetAllProductParamsBody extends BaseBodyModel {
-   late int? pageNumber;
+  late int? pageNumber;
   late int? limit;
-
-  late String? industryId;
-  late List<String>? filterIDs;
-  late int sortBy;
-
-
+  late String? category;
 
   late bool? withCompanyName;
 
   @override
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> res = {};
-    res.addAll({
-      // integer
-      'PageNumber': pageNumber,
-       // integer
-
-    });
-
+    if (limit != null) res['limit'] = limit;
+    if (category != null) res['category'] = category;
+    if (pageNumber != null) res['pageNumber'] = pageNumber;
     return res;
   }
 
   factory GetAllProductParamsBody.fromJson(Map<String, dynamic> json) =>
       GetAllProductParamsBody(
-        pageNumber: json['pageNumber'] as int,
-        limit: json['limit'] as int,
-
+         limit: json['limit'] as int?,
+        category: json['category'] as String?,
       );
 
-  GetAllProductParamsBody({
-    required this.pageNumber,
-    required this.limit,
+  GetAllProductParamsBody({this.pageNumber, this.limit, this.category});
 
-  });
-  @override
-  List<Object?> get props => [
-     pageNumber,
-    limit,
-
-  ];
-
-   }
+  List<Object?> get props => [pageNumber, limit, category];
+}

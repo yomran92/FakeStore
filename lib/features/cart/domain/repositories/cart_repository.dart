@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:fakestore/features/category/data/models/params/get_all_category.dart';
 import '../../../../core/feature/domain/entities/error_entity.dart';
 import '../../../../core/feature/domain/repositories/irepository.dart';
  import '../../data/models/params/cart_item_param.dart';
-import '../../data/models/response/cart_item_model.dart';
 import '../entities/category.dart';
 
 
