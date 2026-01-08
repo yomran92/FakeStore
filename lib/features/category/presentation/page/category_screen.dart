@@ -120,7 +120,7 @@ void initSearch(){
                       child: TextField(
                         controller: _searchController,
                         decoration: InputDecoration(
-                          hintText: 'Search category...',
+                          hintText: AppStrings.searchCategory,
                           prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.r),
