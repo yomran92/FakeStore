@@ -9,6 +9,15 @@ Clean Architecture with three layers:
   - Domain: Entities, use cases, repository interfaces. 
   - Data: Remote (Dio),  models, repository implementations.
 //////////////////////////////////////////////////////////////
+Dependencies
+    flutter_bloc:State management
+    dio:API requests
+    flutter_screenutil:Responsive UI
+    get_it:Dependency injection  a simple Service Locator for accessing objects from anywhere in the app, essential for Clean Architecture
+    cached_network_imag:Image caching
+    pull_to_refresh_flutter3:Pull-to-refresh & pagination
+    badges:Cart badge
+//////////////////////////////////////////////////////////////
  
 ## � Demo
 
