@@ -1,49 +1,59 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:fakestore/features/products/data/models/params/get_all_product.dart';
 import 'package:fakestore/features/products/data/models/response/get_all_product_model.dart';
 
-import '../../../../core/feature/data/data_sources/remote_data_source.dart';
-import '../../../../injection_container.dart';
+import '../../../../core/error/exceptions.dart';
+import '../models/params/get_product_by_id.dart';
 
-abstract class IProductRemoteDataSource extends RemoteDataSource {
-   Future<GetAllProductModel> getAllProducts(GetAllProductParams model);
-
+abstract class IProductRemoteDataSource  {
+  Future<GetAllProductModel> getAllProducts(GetAllProductParams model);
+  Future<ProductModel> getProductDetail(GetProductByIdParams model);
 }
 
 class ProductRemoteDataSource extends IProductRemoteDataSource {
-
-  ProductRemoteDataSource( {required this.client});
+  ProductRemoteDataSource({required this.client});
   final Dio client;
 
   @override
   Future<GetAllProductModel> getAllProducts(GetAllProductParams params) async {
-     final response = await client.get(
-      'https://fakestoreapi.com/products',
-      // queryParameters: limit != null ? {'limit': limit} : null,
-    );
+    try {
 
-    if (response.statusCode == 200) {
-      return
-        GetAllProductModel(
-          listMessageContent: (response.data as List)
-              .map((json) => ProductModel.fromJson(json))
-              .toList()
-        );
+      final response = await client.get(
+        params.url,
+        queryParameters: params.urlParams,
+      );
 
-    } else {
-      throw Exception();
+      return GetAllProductModel(
+        listMessageContent:
+            (response.data as List)
+                .map((json) => ProductModel.fromJson(json))
+                .toList(),
+      );
+    } on DioException catch (e) {
+      throw AppException('Failed to fetch products: ${e.message}');
+    } on SocketException {
+      throw AppException('No internet connection');
     }
   }
 
-  // @override
-  // Future<ProductModel> getProductDetails(int id) async {
-  //   final response = await client.get('https://fakestoreapi.com/products/$id');
-  //
-  //   if (response.statusCode == 200) {
-  //     return ProductModel.fromJson(response.data);
-  //   } else {
-  //     throw ServerException();
-  //   }
-  // }
+  @override
+  Future<ProductModel> getProductDetail(GetProductByIdParams model) async {
+    try {
+      final response = await client.get(
+       model.url,
+      );
 
-   }
+      if (response.statusCode == 200) {
+        return ProductModel.fromJson(response.data);
+      } else {
+        throw AppException('Failed to fetch product details');
+      }
+    } on DioException catch (e) {
+      throw AppException('Failed to fetch product details: ${e.message}');
+    } on SocketException {
+      throw AppException('No internet connection');
+    }
+  }
+}

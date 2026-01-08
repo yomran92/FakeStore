@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../data/models/response/get_all_product_model.dart';
-import '../../domain/entities/product.dart';
 import '../pages/product_detail_screen.dart';
 
 class ProductCard extends StatelessWidget {
@@ -14,16 +13,18 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => ProductDetailScreen(product: product),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(productId: product.id),
+          ),
+        );
       },
       child: Card(
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.r),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -33,12 +34,14 @@ class ProductCard extends StatelessWidget {
                 child: Hero(
                   tag: 'product_${product.id}',
                   child: CachedNetworkImage(
-                    imageUrl: product?.image??'',
+                    imageUrl: product.image,
                     fit: BoxFit.contain,
                     width: double.infinity,
-                    placeholder: (context, url) =>
-                        const Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                    placeholder:
+                        (context, url) =>
+                            const Center(child: CircularProgressIndicator()),
+                    errorWidget:
+                        (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               ),
@@ -49,7 +52,7 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product?.title??'',
+                    product.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -70,7 +73,7 @@ class ProductCard extends StatelessWidget {
                     children: [
                       Icon(Icons.star, size: 14.sp, color: Colors.amber),
                       Text(
-                        ' ${product.rating?.rate??0} (${product.rating?.count??0})',
+                        ' ${product.rating.rate} (${product.rating.count})',
                         style: TextStyle(fontSize: 12.sp, color: Colors.grey),
                       ),
                     ],

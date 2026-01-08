@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fakestore/core/configurations/app_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,14 +11,14 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Shopping Cart')),
+      appBar: AppBar(title: const Text(AppStrings.shoppingCart)),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           if (state is CartLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CartLoaded) {
             if (state.items.isEmpty) {
-              return const Center(child: Text('Your cart is empty'));
+              return const Center(child: Text(AppStrings.yourCartIsEmpty));
             }
             return Column(
               children: [
@@ -111,18 +112,13 @@ class CartScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total: \$${state.totalAmount.toStringAsFixed(2)}',
+                        '${AppStrings.total}: \$${state.totalAmount.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Setup Checkout
-                        },
-                        child: const Text('Checkout'),
-                      ),
+
                     ],
                   ),
                 ),

@@ -49,7 +49,7 @@ abstract class RemoteDataSource {
     try {
       final response = await request();
       responseJson = _returnResponse(response);
-    } on DioException catch (e, stackTrace) {
+    } on DioException catch (e) {
 
 
       if (e.type == DioExceptionType.connectionTimeout ||
@@ -70,14 +70,14 @@ abstract class RemoteDataSource {
       } else {
         throw FetchDataException(message: 'Unknown Dio error');
       }
-    } on SocketException catch (e, stackTrace) {
+    } on SocketException catch (e) {
       // ✅ DNS or raw socket failure (before Dio’s internals)
        throw NoInternetException();
-    } on TimeoutException catch (e, stackTrace) {
+    } on TimeoutException catch (e) {
          throw RequestTimeoutException(message: 'Request timed out');
-    } on AppException catch (e, stackTrace) {
+    } on AppException catch (e) {
         throw const AppException('AppException');
-    } catch (e, stackTrace) {
+    } catch (e) {
          rethrow;
     }
 

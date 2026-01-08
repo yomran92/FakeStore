@@ -19,7 +19,8 @@ import '../models/response/get_all_category_model.dart';
     try {
       final GetAllCategoryModel remote = await remoteDataSource.getAllCategorys(model);
       return Right(remote.toEntity());
-    } on AppException catch (e, st) {
+    }
+    on AppException catch (e) {
 
       return Left(ErrorEntity.fromException(e));
     }

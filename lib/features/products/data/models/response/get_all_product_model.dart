@@ -31,7 +31,7 @@ import '../../../domain/entities/product.dart';
               ?.map((e) => ProductModel.fromJson(e))
               .toList() ??
               [];
-    } catch (e, st) {
+    } catch (e) {
 
       rethrow;
     }

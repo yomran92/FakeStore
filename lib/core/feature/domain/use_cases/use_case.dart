@@ -2,7 +2,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../data/models/params/params_model.dart';
 import '../entities/entity.dart';
 import '../entities/error_entity.dart';
 
