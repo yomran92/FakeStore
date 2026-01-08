@@ -56,10 +56,8 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       return;
     }
 
-    // Handle category filter - fetch from API
-    if (event.category != null) {
-      // Show loading indicator only if not refreshing/loading more
-      if (!event.isLoadMore && !event.isRefresh) {
+     if (event.category != null) {
+       if (!event.isLoadMore && !event.isRefresh) {
         emit(ProductLoading());
       } else if (state is GetAllProductLoaded) {
         emit(
@@ -69,8 +67,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         );
       }
 
-      // Fetch products by category from API
-      final res = await GetAllProductUseCase(
+       final res = await GetAllProductUseCase(
         sl<ProductRepository>(),
       ).call(event.getProductsParams!);
 
@@ -88,8 +85,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       return;
     }
 
-    // Handle initial fetch, refresh or load more
-    if (!event.isLoadMore && !event.isRefresh) {
+     if (!event.isLoadMore && !event.isRefresh) {
       emit(ProductLoading());
     } else if (state is GetAllProductLoaded) {
       emit(
@@ -99,8 +95,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       );
     }
 
-    // Fetch products from API
-    final res = await GetAllProductUseCase(
+     final res = await GetAllProductUseCase(
       sl<ProductRepository>(),
     ).call(event.getProductsParams!);
 

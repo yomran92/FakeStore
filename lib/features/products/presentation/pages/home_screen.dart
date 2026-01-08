@@ -8,6 +8,7 @@ import '../../../../core/widget/app_error_widget.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/pages/cart_screen.dart';
+import '../../../category/presentation/page/category_screen.dart';
 import '../bloc/product_bloc.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import '../widgets/category_filter.dart';
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   final TextEditingController _searchController = TextEditingController();
 
-  int _currentLimit = 4;
+  int _currentLimit = AppConfigurations.PageSize;
 
   @override
   void initState() {
@@ -86,6 +87,15 @@ class _HomeScreenState extends State<HomeScreen> {
         title:   Text(AppStrings.appName),
         actions: [
 
+          IconButton(
+            icon: const Icon(Icons.category),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CategoryScreen()),
+              );
+            },
+          ),
           BlocBuilder<CartBloc, CartState>(
             builder: (context, state) {
               int count = 0;

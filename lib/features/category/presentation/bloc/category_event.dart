@@ -5,8 +5,12 @@ abstract class CategoryEvent extends Equatable {
 }
 
 class GetCategoryEvent extends CategoryEvent {
-  const GetCategoryEvent({this.getCategoryParams});
+  const GetCategoryEvent({this.getCategoryParams,
+    this.searchQuery,
+  });
   final GetAllCategoryParams? getCategoryParams;
+  final String? searchQuery;
+
   @override
   List<Object?> get props => [getCategoryParams];
 }
