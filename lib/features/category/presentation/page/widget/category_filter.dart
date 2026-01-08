@@ -4,10 +4,10 @@ import 'package:fakestore/features/products/data/models/params/get_all_product.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/widget/app_error_widget.dart';
- import '../../../category/data/models/response/get_all_category_model.dart';
-import '../../../category/presentation/bloc/category_bloc.dart';
-import '../../../products/presentation/bloc/product_bloc.dart';
+import '../../../../../core/widget/app_error_widget.dart';
+ import '../../../data/models/response/get_all_category_model.dart';
+import '../../bloc/category_bloc.dart';
+import '../../../../products/presentation/bloc/product_bloc.dart';
 
 class CategoryFilter extends StatelessWidget {
   const CategoryFilter({super.key});

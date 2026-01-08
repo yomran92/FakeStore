@@ -15,4 +15,6 @@ class AppStrings {
   static const String yourCartIsEmpty  = 'Your cart is empty' ;
   static const String checkout  = 'Checkout' ;
   static const String total  = 'Total' ;
+  static const String searchProduct  = 'Search products...' ;
+  static const String searchCategory  = 'Search category...' ;
 }

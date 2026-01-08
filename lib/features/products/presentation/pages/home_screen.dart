@@ -11,7 +11,7 @@ import '../../../cart/presentation/pages/cart_screen.dart';
 import '../../../category/presentation/page/category_screen.dart';
 import '../bloc/product_bloc.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import '../widgets/category_filter.dart';
+import '../../../category/presentation/page/widget/category_filter.dart';
 import '../widgets/product_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,8 +32,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _fetchProducts(isRefresh: true);
+    _fetchSearchState( );
    }
+_fetchSearchState(){
+  if(context.read<ProductBloc>().state is GetAllProductLoaded){
+    GetAllProductLoaded sta=context.read<ProductBloc>().state as GetAllProductLoaded;
 
+    _searchController.text=sta.searchQuery;}
+ }
   @override
   void dispose() {
     _refreshController.dispose();
@@ -144,6 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           } else if (state is GetAllProductLoaded) {
+            _fetchSearchState( );
+
             _refreshController.refreshCompleted();
             _refreshController.loadComplete();
           }
@@ -155,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search products...',
+                  hintText: AppStrings.searchProduct,
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.r),
@@ -197,6 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (state is ProductLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is GetAllProductLoaded) {
+
                     return SmartRefresher(
                       controller: _refreshController,
                       enablePullDown: true,
